@@ -1,0 +1,72 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile information",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["client", "pro"] },
+        "avatar": { "type": "string" },
+        "skills": { "type": "array", "items": { "type": "string" } },
+        "bio": { "type": "string" },
+        "is_verified": { "type": "integer" },
+        "is_available": { "type": "integer" },
+        "location": { "type": "string" },
+        "is_admin": { "type": "integer" },
+        "subscription_status": { "type": "string" },
+        "trial_ends_at": { "type": "string", "format": "date-time" },
+        "subscription_ends_at": { "type": "string", "format": "date-time" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    },
+    "Job": {
+      "title": "Job",
+      "description": "Job request details",
+      "type": "object",
+      "properties": {
+        "client_id": { "type": "string" },
+        "pro_id": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "initial_price": { "type": "number" },
+        "final_price": { "type": "number" },
+        "status": { "type": "string" },
+        "location": { "type": "string" },
+        "category": { "type": "string" },
+        "image_url": { "type": "string" },
+        "matching_expires_at": { "type": "string", "format": "date-time" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["client_id", "title", "status"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Chat message",
+      "type": "object",
+      "properties": {
+        "job_id": { "type": "string" },
+        "sender_id": { "type": "string" },
+        "content": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["job_id", "sender_id", "content"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/jobs/{jobId}": {
+      "schema": "Job",
+      "description": "Job requests"
+    },
+    "/jobs/{jobId}/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Job chat messages"
+    }
+  }
+}

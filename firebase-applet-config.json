@@ -1,0 +1,10 @@
+{
+  "_note": "This file is intentionally empty. All Firebase config is loaded from environment variables. See .env.example.",
+  "projectId": "",
+  "appId": "",
+  "apiKey": "",
+  "authDomain": "",
+  "firestoreDatabaseId": "",
+  "storageBucket": "",
+  "messagingSenderId": ""
+}

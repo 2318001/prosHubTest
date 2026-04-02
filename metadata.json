@@ -1,0 +1,7 @@
+{
+  "name": "ProsHub — On-Demand Specialist Marketplace",
+  "description": "The professional skills hub where clients find verified specialists for any micro-skill. Features real-time negotiation, identity verification, and a pro subscription model.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
