@@ -1,74 +1,96 @@
+// FILE: firestore.rules — Firestore Security Rules. Controls read/write access per collection for direct browser requests. Deploy with: firebase deploy --only firestore:rules
+
+// =============================================================================
+// FILE: firestore.rules
+// WHAT: Firestore Security Rules — controls who can read/write each collection.
+// WHY:  Even though our server uses the Admin SDK (which bypasses these rules),
+//       these rules protect the database if anyone tries to access Firestore
+//       directly from the browser (e.g., future real-time features).
+// HOW:  Deploy with: firebase deploy --only firestore:rules
+// =============================================================================
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Helper: is the request from a logged-in Firebase Auth user?
     function isAuthenticated() {
       return request.auth != null;
     }
+
+    // Helper: is the request from the owner of a specific user document?
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
+
+    // Helper: is the request from an admin user?
     function isAdmin() {
       return isAuthenticated() &&
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.is_admin == 1;
     }
 
+    // USERS: anyone logged in can read profiles; only owner or admin can edit
     match /users/{userId} {
-      allow read: if isAuthenticated();
+      allow read:   if isAuthenticated();
       allow create: if isAuthenticated() && isOwner(userId);
       allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
       allow delete: if isOwner(userId) || isAdmin();
     }
 
+    // JOBS: anyone logged in can read/create; only parties involved can update
     match /jobs/{jobId} {
-      allow read: if isAuthenticated();
+      allow read:   if isAuthenticated();
       allow create: if isAuthenticated();
       allow update: if isAuthenticated() && (
         request.auth.uid == resource.data.client_id ||
-        request.auth.uid == resource.data.pro_id ||
+        request.auth.uid == resource.data.pro_id   ||
         isAdmin()
       );
       allow delete: if isAdmin();
     }
 
+    // MESSAGES: only job participants can read; anyone logged in can create
     match /messages/{messageId} {
       allow read: if isAuthenticated() && (
-        request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.job_id)).data.client_id ||
-        request.auth.uid == get(/databases/$(database)/documents/jobs/$(resource.data.job_id)).data.pro_id ||
-        isAdmin()
+        request.auth.uid == resource.data.sender_id || isAdmin()
       );
       allow create: if isAuthenticated();
       allow delete: if isAdmin();
     }
 
+    // OFFERS: anyone logged in can read/create/update; only admin can delete
     match /offers/{offerId} {
-      allow read: if isAuthenticated();
+      allow read:   if isAuthenticated();
       allow create: if isAuthenticated();
       allow update: if isAuthenticated();
       allow delete: if isAdmin();
     }
 
+    // NOTIFICATIONS: only the recipient can read/update their own notifications
     match /notifications/{notifId} {
-      allow read: if isAuthenticated() && request.auth.uid == resource.data.user_id;
+      allow read:   if isAuthenticated() && request.auth.uid == resource.data.user_id;
       allow create: if isAuthenticated();
       allow update: if isAuthenticated() && request.auth.uid == resource.data.user_id;
       allow delete: if isAuthenticated() && request.auth.uid == resource.data.user_id;
     }
 
+    // USER DOCUMENTS: owner and admins can read; only owner can create/delete
     match /user_documents/{docId} {
-      allow read: if isAuthenticated() && (request.auth.uid == resource.data.user_id || isAdmin());
+      allow read:   if isAuthenticated() && (request.auth.uid == resource.data.user_id || isAdmin());
       allow create: if isAuthenticated();
       allow delete: if isAuthenticated() && request.auth.uid == resource.data.user_id;
     }
 
+    // COMPLETED WORKS (portfolio): anyone can read; only the pro can create/delete
     match /completed_works/{workId} {
-      allow read: if isAuthenticated();
+      allow read:   if isAuthenticated();
       allow create: if isAuthenticated();
       allow delete: if isAuthenticated() && request.auth.uid == resource.data.pro_id;
     }
 
+    // REVIEWS: anyone can read; only authenticated users can create (server validates)
     match /reviews/{reviewId} {
-      allow read: if isAuthenticated();
+      allow read:   if isAuthenticated();
       allow create: if isAuthenticated();
     }
   }

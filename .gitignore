@@ -1,12 +1,32 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
-build/
-coverage/
-.DS_Store
-*.log
+
+# Environment variables — NEVER commit these
 .env
 .env.local
 .env.production
-firebase-applet-config.json
+
+# Uploaded files (use cloud storage like Cloudinary in production)
 uploads/
-serviceAccount.json
+
+# Database (not needed with Firebase)
+*.db
+*.db-journal
+
+# TypeScript cache
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,26 @@
+{
+  "name": "ProsHub — Professional Skills Hub",
+  "short_name": "ProsHub",
+  "description": "Find, negotiate, and hire verified specialists instantly.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F5F0",
+  "theme_color": "#1246F0",
+  "icons": [
+    {
+      "src": "/PP.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/PP.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/PP.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
